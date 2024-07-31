@@ -51,7 +51,12 @@ export class EntryFormComponent implements OnInit, AfterContentChecked {
     this.entryForm = this.formBuilder.group({
       id: [null],
       name: [null, [Validators.required, Validators.minLength(2)]],
-      description: [null]
+      description: [null],
+      type: [null, Validators.required],
+      amount: [null, Validators.required],
+      date: [null, Validators.required],
+      paid: [null, Validators.required],
+      categoryId: [null, Validators.required]
   });
   }
 
@@ -71,10 +76,10 @@ export class EntryFormComponent implements OnInit, AfterContentChecked {
 
   private setPageTitle(){
     if(this.currentAction == "new")
-      this.pageTitle = "Cadastro de nova categoria";
+      this.pageTitle = "Cadastro de novo lançamento";
     else{
       const entryName = this.entry.name || "";
-      this.pageTitle = "Editanto categoria:" + entryName;
+      this.pageTitle = "Editanto lançamento:" + entryName;
     }
   }
 
@@ -112,8 +117,8 @@ export class EntryFormComponent implements OnInit, AfterContentChecked {
     toastr.success("Solicitação processada com sucesso.");
 
     //força recarregamento do componente
-    this.router.navigateByUrl("categories", {skipLocationChange: true}).then( 
-      () => this.router.navigate(["categories", entry.id, "edit"])
+    this.router.navigateByUrl("entries", {skipLocationChange: true}).then( 
+      () => this.router.navigate(["entries", entry.id, "edit"])
     );
   }
 
