@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable, throwError } from "rxjs";
 import { map, catchError, flatMap } from "rxjs/operators";
 import { Entry } from "./entry.model";
+import { CategoryService } from "../../categories/shared/category.service";
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ import { Entry } from "./entry.model";
 export class EntryService {
   private apiPath: string = "api/entries";
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private categoryService: CategoryService) { }
 
   getAll(): Observable<Entry[]> {
     return this.http.get(this.apiPath).pipe(
@@ -28,19 +29,32 @@ export class EntryService {
     )
   }
 
-  create(category: Entry): Observable<Entry> {
-    return this.http.post(this.apiPath, category).pipe(
-      catchError(this.handleError),
-      map(this.jsonDataToEntry)
-    )
+  create(entry: Entry): Observable<Entry> {
+    
+    return this.categoryService.getById(entry.categoryId).pipe(
+      flatMap (category => {
+        entry.category = category;//utilizado somente com in-memory-web-api
+
+        return this.http.post(this.apiPath, entry).pipe(
+          catchError(this.handleError),
+          map(this.jsonDataToEntry)
+        )
+      })
+    );
   }
 
-  update(category: Entry): Observable<Entry> {
-    const url = `${this.apiPath}/${category.id}`;
+  update(entry: Entry): Observable<Entry> {
+    const url = `${this.apiPath}/${entry.id}`;
 
-    return this.http.put(url, category).pipe(
-      catchError(this.handleError),
-      map(() => category)//ao utilizar BD é necessário devolver o objeto alterado
+    return this.categoryService.getById(entry.categoryId).pipe(
+      flatMap (category => {
+        entry.category = category; //utilizado somente com in-memory-web-api
+
+        return this.http.put(url, entry).pipe(
+          catchError(this.handleError),
+          map(() => entry)//ao utilizar BD é necessário devolver o objeto alterado
+        );
+      })
     );
   }
 

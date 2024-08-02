@@ -29,7 +29,7 @@
         <tr class="bg-primary text-light">
             <th>Lançamento</th>
             <th>Categoria</th>
-            <th class="text-right">Valor</th>
+            <th class="text-end">Valor</th>
             <th class="text-center">Ações</th>
         </tr>
     </thead>
@@ -43,7 +43,7 @@
         <td>
             {{entry.category.name}}
         </td>
-        <td class="text-right">
+        <td class="text-end">
             <strong [class.text-success]="entry.type == 'revenue'" [class.text-danger]="entry.type == 'expense'" >
                 {{entry.amount}}
             </strong>
